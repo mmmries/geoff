@@ -1,24 +1,27 @@
 # Geoff
 
-**TODO: Add description**
+A program that drives a roomba around and tries to act like it's alive.
 
-## Installation
+## Setup Pi
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+Geoff runs on a raspberry pi 3 that rides along on the robot.
+In order to get Geoff up and running you should bootup a raspberry pi with a jessie-lite image.
+Then setup wifi and internationalization settings and run the following commands as root.
 
-  1. Add `geoff` to your list of dependencies in `mix.exs`:
+```
+echo "deb http://packages.erlang-solutions.com/debian wheezy contrib" >> /etc/apt/sources.list
+wget http://packages.erlang-solutions.com/debian/erlang_solutions.asc
+sudo apt-key add erlang_solutions.asc && rm erlang_solutions.asc
+sudo apt-get update
+apt-get install -y --force-yes erlang-mini upstart htop git vim
+mkdir /opt/elixir
+curl  -L https://github.com/elixir-lang/elixir/releases/download/v1.3.4/Precompiled.zip -o /opt/elixir/precompiled.zip
+cd /opt/elixir
+unzip precompiled.zip
+echo 'export PATH=/opt/elixir/bin:$PATH' >> /etc/bash.bashrc
+export PATH=/opt/elixir/bin:$PATH
+/opt/elixir/bin/mix local.hex --force
+/opt/elixir/bin/mix local.rebar --force
+```
 
-    ```elixir
-    def deps do
-      [{:geoff, "~> 0.1.0"}]
-    end
-    ```
-
-  2. Ensure `geoff` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:geoff]]
-    end
-    ```
-
+Now all your prerequisites are setup and you can clone this repo into `/opt/geoff` and run the code.
