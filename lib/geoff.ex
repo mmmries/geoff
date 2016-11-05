@@ -8,12 +8,13 @@ defmodule Geoff do
 
     children = [
       worker(Geoff.Whiskers, [name: Geoff.Whiskers]),
-      worker(Roombex.DJ, [[tty: '/dev/ttyUSB0', report_to: Geoffoff],[name: :dj]])
+      worker(Roombex.DJ, [[tty: '/dev/ttyUSB0', report_to: Geoff.Whiskers],[name: :dj]]),
+      worker(Geoff.Curiosity, [name: Geoff.Curiosity]),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Geoff.Supervisor]
+    opts = [strategy: :rest_for_one, name: Geoff.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

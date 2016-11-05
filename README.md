@@ -13,7 +13,7 @@ echo "deb http://packages.erlang-solutions.com/debian wheezy contrib" >> /etc/ap
 wget http://packages.erlang-solutions.com/debian/erlang_solutions.asc
 sudo apt-key add erlang_solutions.asc && rm erlang_solutions.asc
 sudo apt-get update
-apt-get install -y --force-yes erlang-mini upstart htop git vim
+apt-get install -y --force-yes erlang-mini
 mkdir /opt/elixir
 curl  -L https://github.com/elixir-lang/elixir/releases/download/v1.3.4/Precompiled.zip -o /opt/elixir/precompiled.zip
 cd /opt/elixir
@@ -24,4 +24,8 @@ export PATH=/opt/elixir/bin:$PATH
 /opt/elixir/bin/mix local.rebar --force
 ```
 
-Now all your prerequisites are setup and you can clone this repo into `/opt/geoff` and run the code.
+Now send your local copy of this repo to the raspberry pi with a command like:
+
+```
+rsync -avz --exclude .git --exclude _build . pi@geoff.local:~/geoff
+```
