@@ -1,2 +1,2 @@
 %{"roombex": {:hex, :roombex, "0.0.5", "c505decf358671b7484ba735ae2ddbbdc32b6ee8587be1e8fb027d9d794d0e95", [:mix], [{:serial, "~> 0.1.2", [hex: :serial, optional: false]}]},
-  "serial": {:hex, :serial, "0.1.2", "8c0959331417372bf58f259dbc106c59bb7ed482cb3f63f3765150c02cf14b88", [:mix, :make], []}}
+  "serial": {:hex, :serial, "0.1.2", "8c0959331417372bf58f259dbc106c59bb7ed482cb3f63f3765150c02cf14b88", [:make, :mix], []}}

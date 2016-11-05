@@ -6,10 +6,9 @@ defmodule Geoff do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    # Define workers and child supervisors to be supervised
     children = [
-      # Starts a worker by calling: Geoff.Worker.start_link(arg1, arg2, arg3)
-      # worker(Geoff.Worker, [arg1, arg2, arg3]),
+      worker(Geoff.Whiskers, [name: Geoff.Whiskers]),
+      worker(Roombex.DJ, [[tty: '/dev/ttyUSB0', report_to: Geoffoff],[name: :dj]])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
