@@ -37,7 +37,7 @@ defmodule Geoff.Navigator do
         case state.tactic do
           :init ->
             IO.puts "starting turn"
-            DJ.command(:dj, Roombex.drive(100, -1))
+            DJ.command(:dj, Roombex.drive(50, -1))
             Map.put(state, :tactic, :turning)
           :turning ->
             desired_heading = heading_from_vector(dx, dy)
@@ -48,13 +48,48 @@ defmodule Geoff.Navigator do
                 IO.puts "done driving"
                 Map.put(state, :tactic, :driving)
               false ->
+                DJ.command(:dj, Roombex.drive(50, -1))
                 state
             end
+          :driving ->
+            desired_heading = heading_from_vector(dx, dy)
+            dh = turn_diff(whereami.heading, desired_heading);
+            radius = turn_diff_to_radius(dh)
+            speed = distance_to_speed(distance)
+            DJ.command(:dj, Roombex.drive(speed, radius))
         end
     end
   end
 
+  defp distance_to_speed(distance) when distance >= 200.0, do: 200
+  defp distance_to_speed(distance) when distance <= 50.0, do: 50
+  defp distance_to_speed(distance), do: distance |> Float.round |> trunc
+
   defp heading_from_vector(dx, dy) do
     :math.atan2(dx, dy)
+  end
+
+  defp turn_diff(current_heading, desired_heading) do
+    dh = desired_heading - current_heading
+    cond do
+      dh > :math.pi ->
+        -((:math.pi * 2) - dh)
+      dh < -:math.pi ->
+        (:math.pi * 2) + dh
+      true ->
+        dh
+    end
+  end
+
+  defp turn_diff_to_radius(dh) do
+    radius = 100 * (1.0 / dh)
+    cond do
+      radius > 1999.9 ->
+        2000
+      radius < -1999.9 ->
+        -2000
+      true ->
+        Float.round(radius) |> trunc
+    end
   end
 end
