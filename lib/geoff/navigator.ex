@@ -6,8 +6,8 @@ defmodule Geoff.Navigator do
     GenServer.start_link(__MODULE__, nil, genserver_opts)
   end
 
-  def set_destination(pid \\ __MODULE__, {x, y}) do
-    GenServer.call(pid, {:set_destination, {x, y}})
+  def set_destination(pid \\ __MODULE__, %{x: x, y: y}) do
+    GenServer.call(pid, {:set_destination, %{x: x, y: y}})
   end
 
   # Server Callbacks
@@ -15,11 +15,11 @@ defmodule Geoff.Navigator do
     {:ok, %{}}
   end
 
-  def handle_call({:set_destination, {x, y}}, _from, state) do
-    {:reply, :ok, Map.merge(state, %{destination: {x, y}, tactic: :init})}
+  def handle_call({:set_destination, destination}, _from, state) do
+    {:reply, :ok, Map.merge(state, %{destination: destination, tactic: :init})}
   end
 
-  def handle_info({:whisker, _sensors, whereami}, _from, %{destination: _destination}=state) do
+  def handle_info({:whisker, _sensors, whereami}, %{destination: _destination}=state) do
     state = issue_drive_command(state, whereami)
     {:noreply, state}
   end
@@ -36,7 +36,8 @@ defmodule Geoff.Navigator do
       false ->
         case state.tactic do
           :init ->
-            DJ.command(:dj, Roombex.drive(50, -1))
+            IO.puts "starting turn"
+            DJ.command(:dj, Roombex.drive(100, -1))
             Map.put(state, :tactic, :turning)
           :turning ->
             desired_heading = heading_from_vector(dx, dy)
