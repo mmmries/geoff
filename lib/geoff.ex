@@ -7,6 +7,7 @@ defmodule Geoff do
     import Supervisor.Spec, warn: false
 
     children = [
+      worker(Geoff.Navigator, [[name: Geoff.Navigator]]),
       worker(Geoff.Whisker, [[name: Geoff.Whisker]]),
       worker(Roombex.DJ, [[tty: '/dev/ttyUSB0', report_to: Geoff.Whisker],[name: :dj]]),
       worker(Geoff.Curiosity, [[name: Geoff.Curiosity]]),
