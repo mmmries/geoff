@@ -1,6 +1,6 @@
 defmodule Geoff.Navigator do
   alias Roombex.DJ
-  @accuracy 5.0
+  @accuracy 10.0
 
   def start_link(genserver_opts) do
     GenServer.start_link(__MODULE__, nil, genserver_opts)
@@ -32,11 +32,12 @@ defmodule Geoff.Navigator do
     dy = state.destination.y - whereami.y
     distance = :math.sqrt( :math.pow(dx, 2) + :math.pow(dy, 2) )
     case distance < @accuracy do
-      true -> state |> Map.delete(:destination) |> Map.delete(:tactic)
+      true ->
+        DJ.command(:dj, Roombex.drive(0,0))
+        state |> Map.delete(:destination) |> Map.delete(:tactic)
       false ->
         case state.tactic do
           :init ->
-            IO.puts "starting turn"
             DJ.command(:dj, Roombex.drive(50, -1))
             Map.put(state, :tactic, :turning)
           :turning ->
@@ -45,7 +46,6 @@ defmodule Geoff.Navigator do
             case dh < 0.1 do
               true ->
                 DJ.command(:dj, Roombex.drive(0,0))
-                IO.puts "done driving"
                 Map.put(state, :tactic, :driving)
               false ->
                 DJ.command(:dj, Roombex.drive(50, -1))
@@ -57,6 +57,7 @@ defmodule Geoff.Navigator do
             radius = turn_diff_to_radius(dh)
             speed = distance_to_speed(distance)
             DJ.command(:dj, Roombex.drive(speed, radius))
+            state
         end
     end
   end
@@ -66,7 +67,7 @@ defmodule Geoff.Navigator do
   defp distance_to_speed(distance), do: distance |> Float.round |> trunc
 
   defp heading_from_vector(dx, dy) do
-    :math.atan2(dx, dy)
+    :math.atan2(dy, dx)
   end
 
   defp turn_diff(current_heading, desired_heading) do
